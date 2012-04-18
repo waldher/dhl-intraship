@@ -1,6 +1,7 @@
 # Dhl::Intraship
 
-TODO: Write a gem description
+This is a simple gem to wrap the DHL Intraship SOAP Api. Note that currently only the simplest usecase is implemented:
+Sending a national day definite package without any extra services.
 
 ## Installation
 
@@ -18,7 +19,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Initialize a new API object using
+
+```ruby
+api = Dhl::Infraship::Api.new(config, options)
+```
+
+Config is the following hash:
+
+```ruby
+config = {user: 'your Intraship API user name', #mandatory
+          signature: 'Your Intraship API user password', #mandatory
+          ekp: 'Your DHL EKP (first part of your DHL Account number)', #mandatory
+          procedure_id: 'The prodedureId (second part of your DHL Account number)', #optional, defaults to '01'
+          partner_id: 'The partnerId (=attendance, third part of your DHL Account number)' #optional, defaults to '01'
+          }
+```
+
+Options is an optional parameter and can contain the following parameters:
+
+```ruby
+options = {test: true, # If test is set, all API calls go against the Intraship test system
+           label_response_type: xml, # If it's set to XML the createShipment-Calls return the label data as XML instead of the PDF-Link }
+```
 
 ## Contributing
 

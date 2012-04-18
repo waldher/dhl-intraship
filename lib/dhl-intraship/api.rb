@@ -41,6 +41,7 @@ module Dhl
 
       def createShipmentDD(shipments)
         begin
+          returnXML = @config[:label_response_type] && @config[:label_response_type] == 'XML';
           result = @client.request "de:CreateShipmentDDRequest" do
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
@@ -62,6 +63,8 @@ module Dhl
                       xml.SequenceNumber('1')
                       shipments.each do |shipment|
                         shipment.append_to_xml(@ekp, @partner_id, xml)
+                        xml.LabelResponseType('XML') if returnXML
+                        end
                       end
                     end
                   end
@@ -72,8 +75,15 @@ module Dhl
           r = result.to_hash[:create_shipment_response]
           if r[:status][:status_code] == '0'
             shipment_number = r[:creation_state][:shipment_number][:shipment_number]
-            label_url = r[:creation_state][:labelurl]
-            {shipment_number: shipment_number, label_url: label_url}
+
+            if returnXML
+              xml_label = r[:creation_state][:xmllabel]
+              {shipment_number: shipment_number, xml_label: xml_label}
+            else
+              label_url = r[:creation_state][:labelurl]
+              {shipment_number: shipment_number, label_url: label_url}
+            end
+
           else
             raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]}"
           end
