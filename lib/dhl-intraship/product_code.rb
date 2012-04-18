@@ -5,7 +5,7 @@ module Dhl
       DHL_PACKAGE = 'EPN'
       WORLD_PACKAGE = 'BPI'
       DHL_EURO_PACKAGE = 'EPI'
-      DHL EURO_PLUS = 'EUP'
+      DHL_EURO_PLUS = 'EUP'
 
       # Time definite product codes
       DOMESTIC_EXPRESS = 'DXM'

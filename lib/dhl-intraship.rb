@@ -1,4 +1,5 @@
 require "dhl-intraship/version"
+require "dhl-intraship/api"
 
 module Dhl
   module Intraship

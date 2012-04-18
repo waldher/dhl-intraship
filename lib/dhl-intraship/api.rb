@@ -1,3 +1,5 @@
+require 'savon'
+
 module Dhl
   module Intraship
     class API
@@ -14,9 +16,9 @@ module Dhl
       INTRASHIP_TEST_ENDPOINT = "http://test-intraship.dhl.com/ws/1_0/de/ISService"
 
        def initialize(config, options = {})
-         raise "User must be specified" if config[:user].blank?
-         raise "Signature (password) must be specified" if config[:signature].blank?
-         raise "EKP (first part of the DHL account number) must be specified" if config[:ekp].blank?
+         raise "User must be specified" if config[:user].nil?
+         raise "Signature (password) must be specified" if config[:signature].nil?
+         raise "EKP (first part of the DHL account number) must be specified" if config[:ekp].nil?
 
          if options[:test]
             wsdl_url = INTRASHIP_TEST_WSDL
@@ -33,7 +35,7 @@ module Dhl
          @partner_id = config[:partner_id] || '01'
 
          @options = options
-         @client = Savon::Client.new do
+         @client = ::Savon::Client.new do
            wsdl.document = wsdl_url
            wsdl.endpoint = endpoint
          end
@@ -64,7 +66,6 @@ module Dhl
                       shipments.each do |shipment|
                         shipment.append_to_xml(@ekp, @partner_id, xml)
                         xml.LabelResponseType('XML') if returnXML
-                        end
                       end
                     end
                   end

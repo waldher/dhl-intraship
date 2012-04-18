@@ -1,3 +1,5 @@
+require "dhl-intraship/product_code"
+
 module Dhl
   module Intraship
     class Shipment
