@@ -1,0 +1,46 @@
+module Dhl
+  module Intraship
+    class Shipment
+      PACKAGE_TYPE = 'PK'
+
+      attr_accessor :sender_address, :receiver_address, :shipment_date, :weight, :length, :height, :width, :product_code
+
+      def initialize
+        self.product_code = ProductCode::DHL_PACKAGE
+      end
+
+      def product_code=(product_code)
+        raise "No valid product code #{product_code}" unless ProductCode::VALID_PRODUCT_CODES.include?(product_code)
+        self.product_code = product_code
+      end
+
+      def append_to_xml(ekp, partner_id, xml)
+        xml.Shipment do |xml|
+          xml.ShipmentDetails do |xml|
+            xml.ProductCode(PRODUCT_CODE)
+            xml.ShipmentDate(:shipment_date.strftime("%Y-%m-%d"))
+            xml.cis(:EKP, ekp)
+            xml.Attendance do |xml|
+              xml.cis(:partnerID, partner_id)
+            end
+            xml.ShipmentItem do |xml|
+              xml.WeightInKG(:weight)
+              xml.LengthInCM(:length) unless length.nil?
+              xml.WidthInCM(:width) unless width.nil?
+              xml.HeightInCM(:height) unless height.nil?
+              xml.PackageType(PACKAGE_TYPE)
+            end
+          end
+          # Shipper information
+          xml.Shipper do |xml|
+            sender_address.append_to_xml(xml)
+          end
+          # Receiver information
+          xml.Receiver do |xml|
+            receiver_address.append_to_xml(xml)
+          end
+        end
+      end
+    end
+  end
+end
