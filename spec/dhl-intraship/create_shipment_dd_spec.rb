@@ -1,13 +1,9 @@
-require 'savon/spec'
-require 'dhl-intraship/api'
-require 'dhl-intraship/shipment'
-require 'dhl-intraship/address'
+require 'spec_helper'
 
-RSpec.configure do |config|
-  config.include Savon::Spec::Macros
-end
+module Dhl
+  module Intraship
 
-TEST_RESPONSE = <<EOS
+    TEST_RESPONSE = <<EOS
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
   <soapenv:Body>
     <ns2:CreateShipmentResponse xmlns:ns2="http://de.ws.intraship">
@@ -39,25 +35,28 @@ TEST_RESPONSE = <<EOS
 </soapenv:Envelope>
 EOS
 
-describe Dhl::Intraship::API do
-  before(:each) do
-    savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: TEST_RESPONSE )
+    describe API do
+      before(:each) do
+        config = {user: 'user', signature: 'signature', ekp: 'ekp12345'}
+        options = {test: true}
+        @api = API.new(config, options)
+      end
 
-    config = {user: 'user', signature: 'signature', ekp: 'ekp12345'}
-    options = {test: true}
-    @api = Dhl::Intraship::API.new(config, options)
+      it "should create an API call" do
+        savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: TEST_RESPONSE )
+
+        shipment = Shipment.new
+        shipment.shipment_date=Date.today + 1
+
+        sender = Address.new
+        receiver = Address.new
+        shipment.receiver_address=receiver
+        shipment.sender_address=sender
+
+        @api.createShipmentDD([shipment]).should_not be_nil
+      end
+
+    end
+
   end
-
-  it "should create an API call" do
-    shipment = Dhl::Intraship::Shipment.new
-    shipment.shipment_date=Date.today + 1
-
-    sender = Dhl::Intraship::Address.new
-    receiver = Dhl::Intraship::Address.new
-    shipment.receiver_address=receiver
-    shipment.sender_address=sender
-
-    @api.createShipmentDD([shipment]).should_not be_nil
-  end
-
 end
