@@ -43,7 +43,7 @@ module Dhl
 
       def createShipmentDD(shipments)
         begin
-          returnXML = @config[:label_response_type] && @config[:label_response_type] == 'XML';
+          returnXML = @config && @config[:label_response_type] && @config[:label_response_type] == 'XML';
           result = @client.request "de:CreateShipmentDDRequest" do
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
