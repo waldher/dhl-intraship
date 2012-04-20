@@ -40,7 +40,7 @@ Options is an optional parameter and can contain the following parameters:
 
 ```ruby
 options = {test: true, # If test is set, all API calls go against the Intraship test system
-           label_response_type: xml, # If it's set to XML the createShipment-Calls return the label data as XML instead of the PDF-Link }
+           label_response_type: :xml} # If it's set to XML the createShipment-Calls return the label data as XML instead of the PDF-Link
 ```
 
 To send a shipment to DHL you need to create it first:
