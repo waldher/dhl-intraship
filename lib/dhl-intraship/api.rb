@@ -43,15 +43,22 @@ module Dhl
 
       def createShipmentDD(shipments)
         begin
+          # For some reason the class instance variables are not accessible inside of the request block
+          user = @user
+          signature = @signature
+          ekp = @ekp
+          procedure_id = @procedure_id
+          partner_id = @partner_id
+
           returnXML = @config && @config[:label_response_type] && @config[:label_response_type] == 'XML';
           result = @client.request "de:CreateShipmentDDRequest" do
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
                 xml.soapenv(:Header) do |xml|
                   xml.cis(:Authentification) do |xml|
-                    xml.cis(:user, @user)
-                    xml.cis(:signature, @signature)
-                    xml.cis(:accountNumber, "#{@ekp}|#{@procedure_id}|#{@partner_id}")
+                    xml.cis(:user, user)
+                    xml.cis(:signature, signature)
+                    xml.cis(:accountNumber, "#{ekp}|#{procedure_id}|#{partner_id}")
                     xml.cis(:type, '0')
                   end
                 end
@@ -64,7 +71,7 @@ module Dhl
                     xml.ShipmentOrder do |xml|
                       xml.SequenceNumber('1')
                       shipments.each do |shipment|
-                        shipment.append_to_xml(@ekp, @partner_id, xml)
+                        shipment.append_to_xml(ekp, partner_id, xml)
                         xml.LabelResponseType('XML') if returnXML
                       end
                     end

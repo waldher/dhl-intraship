@@ -54,7 +54,6 @@ EOS
 
         @api.createShipmentDD([shipment]).should_not be_nil
       end
-
     end
 
   end
