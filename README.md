@@ -46,20 +46,32 @@ options = {test: true, # If test is set, all API calls go against the Intraship 
 To send a shipment to DHL you need to create it first:
 
 ```ruby
-sender_address = Dhl::Intraship::Address.new(company: 'Team Europe Ventures', street: 'Mohrenstraße',
-                                            house_number: '60', zip: '10117', city: 'Berlin', country_code: 'DE',
-                                            email: 'info@teameurope.net')
+sender_address = Dhl::Intraship::Address.new(company: 'Team Europe Ventures',
+                                             street: 'Mohrenstraße',
+                                             house_number: '60',
+                                             zip: '10117',
+                                             city: 'Berlin',
+                                             country_code: 'DE',
+                                             email: 'info@teameurope.net')
 
-receiver_address = Dhl::Intraship::Address.new(firstname: 'John', lastname: 'Doe',
-                                                   street: 'Mainstreet', house_number: '10',
-                                                   street_additional: 'Appartment 2a',
-                                                   zip: '90210', city: 'Springfield',
-                                                   country_code: 'DE',
-                                                   email: 'john.doe@example.com')
+receiver_address = Dhl::Intraship::Address.new(firstname: 'John',
+                                               lastname: 'Doe',
+                                               street: 'Mainstreet',
+                                               house_number: '10',
+                                               street_additional: 'Appartment 2a',
+                                               zip: '90210',
+                                               city: 'Springfield',
+                                               country_code: 'DE',
+                                               email: 'john.doe@example.com')
 
-shipment = Dhl::Intraship::Shipment.new(sender_address: sender_address, receiver_address: receiver_address,
+# Note that the weight parameter is in kg and the length/height/width in cm
+shipment = Dhl::Intraship::Shipment.new(sender_address: sender_address,
+                                        receiver_address: receiver_address,
                                         shipment_date: Date.today,
-                                        weight: 2, length: 30, height:15, width: 25)
+                                        weight: 2,
+                                        length: 30,
+                                        height:15,
+                                        width: 25)
 ```
 
 Note that the actual api-call takes an array of shipments

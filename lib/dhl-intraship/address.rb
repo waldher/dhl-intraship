@@ -22,6 +22,17 @@ module Dhl
         @country_code = country_code
       end
 
+      # Note: DHL rejects valid email addresses containing the + sign
+      def email=(email)
+        split = email.split('@')
+        local_part = split[0]
+        if local_part.include?('+')
+          local_part = local_part.split('+')[0]
+        end
+
+        @email = "#{local_part}@#{split[1]}"
+      end
+
       def append_to_xml(xml)
         xml.Company do |xml|
           if company?
