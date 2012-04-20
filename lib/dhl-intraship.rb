@@ -1,8 +1,5 @@
 require "dhl-intraship/version"
 require "dhl-intraship/api"
-
-module Dhl
-  module Intraship
-    # Your code goes here...
-  end
-end
+require "dhl-intraship/address"
+require "dhl-intraship/shipment"
+require "dhl-intraship/product_code"
