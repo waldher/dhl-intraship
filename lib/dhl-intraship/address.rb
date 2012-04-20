@@ -19,7 +19,7 @@ module Dhl
 
       def country_code=(country_code)
         raise "Country code must be an ISO-3166 two digit code" unless country_code.length == 2
-        self.country_code = country_code
+        @country_code = country_code
       end
 
       def append_to_xml(xml)
