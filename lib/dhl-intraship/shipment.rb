@@ -7,8 +7,14 @@ module Dhl
 
       attr_accessor :sender_address, :receiver_address, :shipment_date, :weight, :length, :height, :width, :product_code
 
-      def initialize
+      def initialize(attributes = {})
         self.product_code = ProductCode::DHL_PACKAGE
+        attributes.each do |key, value|
+          setter = :"#{key.to_s}="
+          if self.respond_to?(setter)
+            self.send(setter, value)
+          end
+        end
       end
 
       def product_code=(product_code)

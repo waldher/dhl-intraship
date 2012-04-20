@@ -45,8 +45,7 @@ EOS
       it "should create an API call" do
         savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: TEST_RESPONSE )
 
-        shipment = Shipment.new
-        shipment.shipment_date=Date.today + 1
+        shipment = Shipment.new(shipment_date: Date.today + 1)
 
         sender = Address.new
         receiver = Address.new

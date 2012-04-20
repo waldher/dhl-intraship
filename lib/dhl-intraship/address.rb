@@ -4,6 +4,15 @@ module Dhl
       attr_accessor :company, :salutation, :firstname, :lastname, :street, :house_number, :street_additional,
       :zip, :city, :country_code, :email
 
+      def initialize(attributes = {})
+        attributes.each do |key, value|
+          setter = :"#{key.to_s}="
+          if self.respond_to?(setter)
+            self.send(setter, value)
+          end
+        end
+      end
+
       def company?
         !self.company.blank?
       end
