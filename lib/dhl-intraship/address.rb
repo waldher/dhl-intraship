@@ -37,16 +37,12 @@ module Dhl
               xml.cis(:firstname, firstname)
               xml.cis(:lastname, lastname)
             end
-            if !street_additional.blank?
-              xml.cis(:Company) do |xml|
-                xml.cis(:name2, street_additional)
-              end
-            end
           end
         end
         xml.Address do |xml|
           xml.cis(:streetName, street)
           xml.cis(:streetNumber, house_number)
+          xml.cis(:careOfName, street_additional) unless street_additional.nil?
           xml.cis(:Zip) do |xml|
             if country_code == 'DE'
               xml.cis(:germany, zip)
