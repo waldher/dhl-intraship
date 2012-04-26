@@ -10,8 +10,8 @@ module Dhl
           "xmlns:is" => "http://dhl.de/webservice/is_base_de",
           "xmlns:cis" => "http://dhl.de/webservice/cisbase"}
 
-      INTRASHIP_WSDL = ""
-      INTRASHIP_ENDPOINT = ""
+      INTRASHIP_WSDL = "http://www.intraship.de/ws/1_0/ISService/DE.wsdl"
+      INTRASHIP_ENDPOINT = "http://www.intraship.de/ws/1_0/de/ISService"
       INTRASHIP_TEST_WSDL = "http://test-intraship.dhl.com/ws/1_0/ISService/DE.wsdl"
       INTRASHIP_TEST_ENDPOINT = "http://test-intraship.dhl.com/ws/1_0/de/ISService"
 
