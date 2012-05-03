@@ -93,7 +93,7 @@ module Dhl
             end
 
           else
-            raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]}"
+            raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]} (Status messages: #{r[:creation_state][:status_message].to_s})"
           end
         rescue Savon::Error => error
           raise error
