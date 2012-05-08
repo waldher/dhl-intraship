@@ -22,7 +22,7 @@ Or install it yourself as:
 Initialize a new API object using
 
 ```ruby
-api = Dhl::Infraship::API.new(config, options)
+api = Dhl::Intraship::API.new(config, options)
 ```
 
 Config is the following hash:
