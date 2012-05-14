@@ -3,7 +3,7 @@ require 'spec_helper'
 module Dhl
   module Intraship
 
-    TEST_RESPONSE = <<EOS
+    CREATE_RESPONSE = <<EOS
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
   <soapenv:Body>
     <ns2:CreateShipmentResponse xmlns:ns2="http://de.ws.intraship">
@@ -43,7 +43,7 @@ EOS
       end
 
       it "should create an API call" do
-        savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: TEST_RESPONSE )
+        savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: CREATE_RESPONSE )
 
         shipment = Shipment.new(shipment_date: Date.today + 1)
 
@@ -52,7 +52,7 @@ EOS
         shipment.receiver_address=receiver
         shipment.sender_address=sender
 
-        @api.createShipmentDD([shipment]).should_not be_nil
+        @api.createShipmentDD(shipment).should_not be_nil
       end
     end
 

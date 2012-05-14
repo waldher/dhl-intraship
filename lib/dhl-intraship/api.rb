@@ -43,11 +43,10 @@ module Dhl
 
       def createShipmentDD(shipments)
         begin
+          shipments = [shipments] unless shipments.respond_to?('each')
+
           # For some reason the class instance variables are not accessible inside of the request block
-          user = @user
-          signature = @signature
-          ekp = @ekp
-          procedure_id = @procedure_id
+	  ekp = @ekp
           partner_id = @partner_id
 
           returnXML = @config && @config[:label_response_type] && @config[:label_response_type] == :xml;
@@ -55,12 +54,7 @@ module Dhl
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
                 xml.soapenv(:Header) do |xml|
-                  xml.cis(:Authentification) do |xml|
-                    xml.cis(:user, user)
-                    xml.cis(:signature, signature)
-                    xml.cis(:accountNumber, "#{ekp}|#{procedure_id}|#{partner_id}")
-                    xml.cis(:type, '0')
-                  end
+                  append_default_header_to_xml(xml)
                 end
                 xml.soapenv(:Body) do |xml|
                   xml.de(:"CreateShipmentDDRequest") do |xml|
@@ -93,11 +87,61 @@ module Dhl
             end
 
           else
-            raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]} (Status messages: #{r[:creation_state][:status_message].to_s})"
+            raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]} (Status messages: #{r[:creation_state][:status].to_s})"
           end
         rescue Savon::Error => error
           raise error
         end
+      end
+
+      def deleteShipmentDD(shipment_number)
+        begin
+          result = @client.request "de:DeleteShipmentDDRequest" do
+            soap.xml do |xml|
+              xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
+                xml.soapenv(:Header) do |xml|
+                  append_default_header_to_xml(xml)
+                end
+                xml.soapenv(:Body) do |xml|
+                  xml.de(:"DeleteShipmentDDRequest") do |xml|
+                    xml.cis(:Version) do |xml|
+                      xml.cis(:majorRelease, '1')
+                      xml.cis(:minorRelease, '0')
+                    end
+                    xml.ShipmentNumber do |xml|
+                      xml.cis(:shipmentNumber, shipment_number)
+                    end
+                  end
+                end
+              end
+	    end
+          end
+          r = result.to_hash[:delete_shipment_response]
+
+	  # Return true if successful
+          raise "Intraship call failed with code #{r[:status][:status_code]}: #{r[:status][:status_message]} (Status messages: #{r[:deletion_state][:status].to_s})" unless r[:status][:status_code] == '0'
+
+	  true
+	rescue Savon::Error => error
+          raise error
+        end
+      end
+
+protected
+      def append_default_header_to_xml(xml)
+          # For some reason the class instance variables are not accessible inside of the request block
+          user = @user
+          signature = @signature
+          ekp = @ekp
+          procedure_id = @procedure_id
+          partner_id = @partner_id
+
+          xml.cis(:Authentification) do |xml|
+            xml.cis(:user, user)
+            xml.cis(:signature, signature)
+            xml.cis(:accountNumber, "#{ekp}|#{procedure_id}|#{partner_id}")
+            xml.cis(:type, '0')
+          end
       end
     end
   end
