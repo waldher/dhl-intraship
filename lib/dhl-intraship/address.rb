@@ -1,10 +1,11 @@
 module Dhl
   module Intraship
     class Address
-      attr_accessor :company, :salutation, :firstname, :lastname, :street, :house_number, :street_additional,
+      attr_accessor :street, :house_number, :street_additional, :street_additional_above_street,
       :zip, :city, :country_code, :email
 
       def initialize(attributes = {})
+        self.street_additional_above_street = true
         attributes.each do |key, value|
           setter = :"#{key.to_s}="
           if self.respond_to?(setter)
@@ -15,6 +16,10 @@ module Dhl
 
       def company?
         !self.company.blank?
+      end
+      
+      def street_additional_above_street?
+        self.street_additional_above_street
       end
 
       def country_code=(country_code)
@@ -32,28 +37,15 @@ module Dhl
 
         @email = "#{local_part}@#{split[1]}"
       end
-
+      
       def append_to_xml(xml)
         xml.Company do |xml|
-          if company?
-            xml.cis(:Company) do |xml|
-              xml.cis(:name1, company)
-              if !street_additional.blank?
-                xml.cis(:name2, street_additional)
-              end
-            end
-          else
-            xml.cis(:Person) do |xml|
-              xml.cis(:salutation, salutation)
-              xml.cis(:firstname, firstname)
-              xml.cis(:lastname, lastname)
-            end
-          end
+          company_xml(xml)
         end
         xml.Address do |xml|
           xml.cis(:streetName, street)
           xml.cis(:streetNumber, house_number)
-          xml.cis(:careOfName, street_additional) unless street_additional.nil?
+          xml.cis(:careOfName, street_additional) if !street_additional.blank? && !street_additional_above_street?
           xml.cis(:Zip) do |xml|
             if country_code == 'DE'
               xml.cis(:germany, zip)
@@ -69,9 +61,19 @@ module Dhl
           end
         end
         xml.Communication do |xml|
-          xml.cis(:email, self.email)
-          xml.cis(:contactPerson, "#{firstname} #{lastname}")
+          xml.cis(:email, self.email) unless self.email.blank?
+          communication_xml(xml)
         end
+      end
+      
+      protected
+      
+      def company_xml(xml)
+        raise "Use one of the two subclasses: PersonAddress or CompanyAddress!"
+      end
+      
+      def communication_xml(xml)
+        raise "Use one of the two subclasses: PersonAddress or CompanyAddress!"
       end
     end
   end

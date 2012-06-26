@@ -1,5 +1,7 @@
 require "dhl-intraship/version"
 require "dhl-intraship/api"
 require "dhl-intraship/address"
+require "dhl-intraship/person_address"
+require "dhl-intraship/company_address"
 require "dhl-intraship/shipment"
 require "dhl-intraship/product_code"
