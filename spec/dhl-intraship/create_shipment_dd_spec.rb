@@ -47,7 +47,7 @@ EOS
 
         shipment = Shipment.new(shipment_date: Date.today + 1)
 
-        sender = CopmanyAddress.new
+        sender = CompanyAddress.new
         receiver = PersonAddress.new
         shipment.receiver_address=receiver
         shipment.sender_address=sender

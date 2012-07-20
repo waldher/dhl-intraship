@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{This wraps the DHL Intraship SOAP Interface for creating shipments}
   gem.homepage      = "https://github.com/teameurope/dhl-intraship"
 
-  gem.add_dependency "savon", "~> 0.9.9"
-  gem.add_development_dependency "rspec", "~> 2.9"
-  gem.add_development_dependency "savon_spec", "~> 0.1.6"
+  gem.add_dependency "savon", "~> 1.1.0"
+  gem.add_development_dependency "rspec", "~> 2.11.0"
+  gem.add_development_dependency "savon_spec", "~> 1.3.0"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

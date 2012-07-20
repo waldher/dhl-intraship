@@ -2,7 +2,7 @@ module Dhl
   module Intraship
     class Address
       attr_accessor :street, :house_number, :street_additional, :street_additional_above_street,
-      :zip, :city, :country_code, :email
+      :zip, :city, :country_code, :email, :phone
 
       def initialize(attributes = {})
         self.street_additional_above_street = true
@@ -27,17 +27,6 @@ module Dhl
         @country_code = country_code
       end
 
-      # Note: DHL rejects valid email addresses containing the + sign
-      def email=(email)
-        split = email.split('@')
-        local_part = split[0]
-        if local_part.include?('+')
-          local_part = local_part.split('+')[0]
-        end
-
-        @email = "#{local_part}@#{split[1]}"
-      end
-      
       def append_to_xml(xml)
         xml.Company do |xml|
           company_xml(xml)
@@ -61,6 +50,7 @@ module Dhl
           end
         end
         xml.Communication do |xml|
+          xml.cis(:phone, self.phone) unless self.phone.blank?
           xml.cis(:email, self.email) unless self.email.blank?
           communication_xml(xml)
         end
