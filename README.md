@@ -1,7 +1,7 @@
 # Dhl::Intraship
 
-This is a simple gem to wrap the DHL Intraship SOAP Api. Note that currently only the simplest usecase is implemented:
-Sending a national day definite package without any extra services.
+This is a simple gem to wrap the DHL Intraship SOAP Api. Note that currently only "national day definite shipment" usecases are implemented  (Sending, deleting and manifesting national day definite packages without any extra services.)
+Booking a pickup is implemented as prototype, but not yet supported by DHL itself.
 
 ## Installation
 
@@ -43,7 +43,10 @@ options = {test: true, # If test is set, all API calls go against the Intraship 
            label_response_type: :xml} # If it's set to XML the createShipment-Calls return the label data as XML instead of the PDF-Link
 ```
 
-To send a shipment to DHL you need to create it first:
+### Create a shipment
+
+To create a shipment to DHL you need to create it first
+
 
 ```ruby
 sender_address = Dhl::Intraship::CompanyAddress.new(company: 'Team Europe Ventures',
@@ -54,7 +57,6 @@ sender_address = Dhl::Intraship::CompanyAddress.new(company: 'Team Europe Ventur
                                                     city: 'Berlin',
                                                     country_code: 'DE',
                                                     email: 'info@teameurope.net')
-
 receiver_address = Dhl::Intraship::PersonAddress.new(firstname: 'John',
                                                      lastname: 'Doe',
                                                      street: 'Mainstreet',
@@ -64,8 +66,7 @@ receiver_address = Dhl::Intraship::PersonAddress.new(firstname: 'John',
                                                      city: 'Springfield',
                                                      country_code: 'DE',
                                                      email: 'john.doe@example.com')
-
-# Note that the weight parameter is in kg and the length/height/width in cm
+#Note that the weight parameter is in kg and the length/height/width in cm
 shipment = Dhl::Intraship::Shipment.new(sender_address: sender_address,
                                         receiver_address: receiver_address,
                                         shipment_date: Date.today,
@@ -74,15 +75,42 @@ shipment = Dhl::Intraship::Shipment.new(sender_address: sender_address,
                                         height:15,
                                         width: 25)
 ```
-Beware, that due to DHL Intraship restrictions, the sender address must be a 
+
+Beware, that due to DHL Intraship restrictions, the sender address must be a
 CompanyAddress and requires a contact_person.
-Also, note that the actual api-call takes an array of shipments:
+The actual api-call takes an array of shipments, or a single shipment.
+The result contains the "shipment_number", as well as the "label_url" (or the "xml_label" when it was specified as repsonse type)
 
 ```ruby
-result = api.createShipmentDD([shipment])
+result = api.createShipmentDD(shipment)
+shipment_number = result[:shipment_number]
+label_url = result[:label_url] # Or result[:xml_label] in case XML label was set in the options
 ```
 
-The result contains the "shipment_number", as well as the "label_url" (or the "xml_label" when it was specified as repsonse type)
+### Delete a shipment
+
+You can create and delete shipments as much as you like, they will not get into the "real" DHL system until you manifest them.
+To delete a shipment call deleteShipmentDD with the shipment number for a non-manifested shipment:
+
+```ruby
+api.deleteShipmentDD(shipment_number)
+```
+
+### Manifesting a shipment
+
+A shipment created in Intraship is only transferred to the "real" DHL systems after the shipment is manifested.
+If "manifestShipment" is not called manually, it should be automatically manifested after the time that is configured in the Intraship backend.
+To manifest the shipment manually call:
+
+```ruby
+api.doManifestDD(shipment_number)
+```
+
+### Booking a pickup
+
+*The "book pickup"-call is defined in the Intraship API and also supported in this gem, but not implemented and supported in Intraship itself*
+
+The API will complain if no "contact orderer" is specified, although it's supposed to be optional. Furthermore issuing a "book pickup" call will yield a  "Please select a product in the shipment details." (1102) error, although the call is completely valid.
 
 ## Contributing
 
