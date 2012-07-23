@@ -17,3 +17,4 @@ test/version_tmp
 tmp
 atlassian-ide-plugin.xml
 .idea
+test.rb

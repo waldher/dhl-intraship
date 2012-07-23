@@ -106,6 +106,8 @@ To manifest the shipment manually call:
 api.doManifestDD(shipment_number)
 ```
 
+*Note that the label has to be downloaded at least once, or Intraship will reply with status code 2030: shipment not printed*
+
 ### Booking a pickup
 
 *The "book pickup"-call is defined in the Intraship API and also supported in this gem, but not implemented and supported in Intraship itself*
