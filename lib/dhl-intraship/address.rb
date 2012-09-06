@@ -1,11 +1,10 @@
 module Dhl
   module Intraship
     class Address
-      attr_accessor :street, :house_number, :street_additional, :street_additional_above_street,
-      :zip, :city, :country_code, :email, :phone
+      attr_accessor :street, :house_number, :street_additional,
+      :zip, :city, :country_code, :contact_person, :email, :phone
 
       def initialize(attributes = {})
-        self.street_additional_above_street = true
         attributes.each do |key, value|
           setter = :"#{key.to_s}="
           if self.respond_to?(setter)
@@ -18,10 +17,6 @@ module Dhl
         !self.company.blank?
       end
       
-      def street_additional_above_street?
-        self.street_additional_above_street
-      end
-
       def country_code=(country_code)
         raise "Country code must be an ISO-3166 two digit code" unless country_code.length == 2
         @country_code = country_code
@@ -34,7 +29,7 @@ module Dhl
         xml.Address do |xml|
           xml.cis(:streetName, street)
           xml.cis(:streetNumber, house_number)
-          xml.cis(:careOfName, street_additional) if !street_additional.blank? && !street_additional_above_street?
+          xml.cis(:careOfName, street_additional) unless street_additional.blank?
           xml.cis(:Zip) do |xml|
             if country_code == 'DE'
               xml.cis(:germany, zip)
@@ -52,7 +47,7 @@ module Dhl
         xml.Communication do |xml|
           xml.cis(:phone, self.phone) unless self.phone.blank?
           xml.cis(:email, self.email) unless self.email.blank?
-          communication_xml(xml)
+          xml.cis(:contactPerson, contact_person.blank? ? "" : contact_person)
         end
       end
       
