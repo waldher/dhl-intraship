@@ -5,7 +5,8 @@ module Dhl
     class Shipment
       PACKAGE_TYPE = 'PK'
 
-      attr_accessor :sender_address, :receiver_address, :shipment_date, :weight, :length, :height, :width, :product_code
+      attr_accessor :sender_address, :receiver_address, :shipment_date, :weight, :length, :height, :width, :product_code,
+                    :customer_reference
 
       def initialize(attributes = {})
         self.product_code = ProductCode::DHL_PACKAGE
@@ -34,6 +35,7 @@ module Dhl
             xml.Attendance do |xml|
               xml.cis(:partnerID, partner_id)
             end
+            xml.CustomerReference(customer_reference) unless customer_reference.blank?
             xml.ShipmentItem do |xml|
               xml.WeightInKG(weight)
               xml.LengthInCM(length) unless length.nil?
