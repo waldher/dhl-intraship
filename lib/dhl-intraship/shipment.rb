@@ -6,16 +6,21 @@ module Dhl
       PACKAGE_TYPE = 'PK'
 
       attr_accessor :sender_address, :receiver_address, :shipment_date, :weight, :length, :height, :width, :product_code,
-                    :customer_reference
+                    :customer_reference, :services
 
       def initialize(attributes = {})
         self.product_code = ProductCode::DHL_PACKAGE
+        self.services = []
         attributes.each do |key, value|
           setter = :"#{key.to_s}="
           if self.respond_to?(setter)
             self.send(setter, value)
           end
         end
+      end
+
+      def add_service(newservice)
+        @services << newservice
       end
 
       def product_code=(product_code)
@@ -42,6 +47,9 @@ module Dhl
               xml.WidthInCM(width) unless width.nil?
               xml.HeightInCM(height) unless height.nil?
               xml.PackageType(PACKAGE_TYPE)
+            end
+            services.each do |service|
+              service.append_to_xml(xml)
             end
           end
           # Shipper information
