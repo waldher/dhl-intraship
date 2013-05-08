@@ -87,6 +87,23 @@ shipment_number = result[:shipment_number]
 label_url = result[:label_url] # Or result[:xml_label] in case XML label was set in the options
 ```
 
+#### Add cash on delivery
+
+For the "cash on delivery" service you need to create a Bankdata object with the payee information.
+Give that together with the amount and the currency to a CODService object. Finally add the service to your shipment:
+
+```ruby
+bankdata = Dhl::Intraship::Bankdata.new(owner: 'John Smith',
+                                        account_number: '1212121212',
+                                        bank_code: '12345679',
+                                        bank_name: 'Testbank 2',
+                                        note: 'OrderID 12345')
+cod_service = Dhl::Intraship::CODService.new(amount:  15.00,
+                                             currency: 'EUR',
+                                             bankdata: bankdata)
+shipment.add_service(cod_service)
+```
+
 ### Delete a shipment
 
 You can create and delete shipments as much as you like, they will not get into the "real" DHL system until you manifest them.
