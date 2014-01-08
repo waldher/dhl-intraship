@@ -19,8 +19,8 @@ module Dhl
           xml.cis(:bankCode, bank_code) unless bank_code.blank?
           xml.cis(:bankName, bank_name) unless bank_name.blank?
           xml.cis(:iban, iban) unless iban.blank?
-          xml.cis(:bic, bic) unless bic.blank?
           xml.cis(:note, note) unless note.blank?
+          xml.cis(:bic, bic) unless bic.blank?
         end
       end
     end
