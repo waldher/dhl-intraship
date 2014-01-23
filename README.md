@@ -66,14 +66,16 @@ receiver_address = Dhl::Intraship::PersonAddress.new(firstname: 'John',
                                                      city: 'Springfield',
                                                      country_code: 'DE',
                                                      email: 'john.doe@example.com')
-#Note that the weight parameter is in kg and the length/height/width in cm
+# Use can use multiple parcels per shipment. Note that the weight
+# parameter is in kg and the length/height/width in cm
+shipment_item = Dhl::Intraship::ShipmentItem.new(weight: 3,
+                                                 length: 120,
+                                                 width:  60,
+                                                 height: 60)
 shipment = Dhl::Intraship::Shipment.new(sender_address: sender_address,
                                         receiver_address: receiver_address,
-                                        shipment_date: Date.today,
-                                        weight: 2,
-                                        length: 30,
-                                        height:15,
-                                        width: 25)
+                                        shipment_items: shipment_item # give array for multiple parcel shipment
+                                        shipment_date: Date.today)
 ```
 
 Beware, that due to DHL Intraship restrictions, the sender address must be a
