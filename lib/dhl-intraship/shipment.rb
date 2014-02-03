@@ -17,6 +17,7 @@ module Dhl
         # this in a new major release ...
         if attributes.has_key?(:weight) or attributes.has_key?(:length) or
             attributes.has_key?(:width) or attributes.has_key?(:height)
+          warn "[DEPRECATION] The single shipment constructor is deprecated, please pass in a ShipmentItem"
           @shipment_items << ShipmentItem.new(attributes)
         else
           @shipment_items.push(*attributes.delete(:shipment_items))
