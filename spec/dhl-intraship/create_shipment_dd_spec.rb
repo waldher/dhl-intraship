@@ -35,25 +35,63 @@ module Dhl
 </soapenv:Envelope>
 EOS
 
+
     describe API do
       before(:each) do
-        config = {user: 'user', signature: 'signature', ekp: 'ekp12345'}
-        options = {test: true}
+        savon.expects("de:CreateShipmentDDRequest").returns(code: 200, headers: {}, body: CREATE_RESPONSE)
+
+        config  = { user: 'user', signature: 'signature', ekp: 'ekp12345' }
+        options = { test: true }
         @api = API.new(config, options)
+        @shipment = Shipment.new(shipment_date:    Date.today + 1,
+                                 sender_address:   CompanyAddress.new,
+                                 receiver_address: PersonAddress.new,
+                                 shipment_items:   ShipmentItem.new(weight: 2.5, length: 11, width: 13, height: 3))
       end
 
       it "should create an API call" do
-        savon.expects("de:CreateShipmentDDRequest" ).returns( code: 200, headers: {},body: CREATE_RESPONSE )
-
-        shipment = Shipment.new(shipment_date: Date.today + 1)
-
-        sender = CompanyAddress.new
-        receiver = PersonAddress.new
-        shipment.receiver_address=receiver
-        shipment.sender_address=sender
-
-        @api.createShipmentDD(shipment).should_not be_nil
+        @api.createShipmentDD(@shipment).should_not be_nil
       end
+
+      it "should not add multipack service with only one shipment item" do
+        savon.expects('de:CreateShipmentDDRequest').with do |request|
+          request.soap.to_xml.should_not include('Multipack')
+        end.returns(code: 200, headers: {}, body: CREATE_RESPONSE)
+
+        @api.createShipmentDD(@shipment).should_not be_nil
+      end
+
+      it "should add multipack service" do
+        @shipment.add_shipment_item(ShipmentItem.new(weight: 2.5, length: 11, width: 13, height: 3))
+        savon.expects('de:CreateShipmentDDRequest').with do |request|
+          request_xml = request.soap.to_xml
+          request_xml.should include('<ServiceGroupDHLPaket>')
+          request_xml.should include('<Multipack>True</Multipack>')
+        end.returns(code: 200, headers: {}, body: CREATE_RESPONSE)
+        @api.createShipmentDD(@shipment).should_not be_nil
+      end
+
+      it "should add dhl express service with higher insurance server" do
+        dhl_express_service = DhlExpressService.new(DhlExpressService::DELIVERY_ON_TIME, '13:51')
+        @shipment.product_code = ProductCode::DHL_DOMESTIC_EXPRESS
+        @shipment.add_service(dhl_express_service)
+        savon.expects('de:CreateShipmentDDRequest').with do |request|
+          request_xml = request.soap.to_xml
+          request_xml.should include('<ServiceGroupDateTimeOption>')
+          request_xml.should include('<DeliveryOnTime>')
+          request_xml.should include('13:51')
+          request_xml.should include('<HigherInsurance>')
+          request_xml.should include('<InsuranceAmount>2500</InsuranceAmount>')
+        end.returns(code: 200, headers: {}, body: CREATE_RESPONSE)
+        @api.createShipmentDD(@shipment).should_not be_nil
+      end
+
+      it "should validate service dependencies" do
+        dhl_express_service = DhlExpressService.new(DhlExpressService::DELIVERY_ON_TIME, '13:51')
+        @shipment.add_service(dhl_express_service)
+        expect { @api.createShipmentDD(@shipment) }.to raise_error(RuntimeError, 'The DhlExpressService can only be add to DHL Domestic Express (EXP) shipments.')
+      end
+
     end
 
   end

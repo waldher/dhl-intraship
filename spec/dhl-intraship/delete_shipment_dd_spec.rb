@@ -56,22 +56,21 @@ DELETE_RESPONSE = <<EOS
 EOS
 
     describe API do
-      before(:each) do
-        config = {user: 'user', signature: 'signature', ekp: 'ekp12345'}
-        options = {test: true}
-        @api = API.new(config, options)
+      before do
+        @config  = { user: 'user', signature: 'signature', ekp: 'ekp12345' }
+        @options = { test: true }
       end
 
       it "should raise an exception on a failed call" do
-        savon.expects("de:DeleteShipmentDDRequest").returns( code: 200, headers: {},body: ERROR_DELETE_RESPONSE )
-
-        expect { @api.deleteShipmentDD("123") }.should raise_error
+        savon.expects("de:DeleteShipmentDDRequest").returns(code: 200, headers: {}, body: ERROR_DELETE_RESPONSE)
+        api = API.new(@config, @options)
+        expect { api.deleteShipmentDD("123") }.to raise_error
       end
 
       it "should return true on successful call" do
-        savon.expects("de:DeleteShipmentDDRequest").returns( code: 200, headers: {},body: DELETE_RESPONSE )
-
-	@api.deleteShipmentDD("123").should be_true
+        savon.expects("de:DeleteShipmentDDRequest").returns(code: 200, headers: {}, body: DELETE_RESPONSE)
+        api = API.new(@config, @options)
+        api.deleteShipmentDD("123").should be_true
       end
     end
 

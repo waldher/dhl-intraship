@@ -53,7 +53,7 @@ EOS
       it "should raise an exception on a failed call" do
         savon.expects("de:BookPickupRequest").returns( code: 200, headers: {},body: ERROR_PICKUP_RESPONSE )
 
-        expect { @api.bookPickup(@booking_information, CompanyAddress.new) }.should raise_error
+        expect { @api.bookPickup(@booking_information, CompanyAddress.new) }.to raise_error
       end
 
     end
