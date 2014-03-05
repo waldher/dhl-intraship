@@ -1,11 +1,9 @@
-require "dhl-intraship/product_code"
-
 module Dhl
   module Intraship
     class Shipment
 
       attr_accessor :sender_address, :receiver_address, :shipment_date, :product_code,
-                    :customer_reference, :services, :shipment_items
+                    :customer_reference, :services, :shipment_items, :dhl_express_service
 
       def initialize(attributes = {})
         self.product_code = ProductCode::DHL_PACKAGE
@@ -32,6 +30,11 @@ module Dhl
       end
 
       def add_service(newservice)
+        case newservice
+        when DhlExpressService
+          unless dhl_domestic_express?
+          end
+        end
         @services << newservice
       end
 
@@ -45,15 +48,11 @@ module Dhl
       end
 
       def append_to_xml(ekp, partner_id, xml)
-        raise "Shipment date must be set!" if shipment_date.nil?
-        raise "Sender address must be set!" if sender_address.nil?
-        raise "Receiver address must be set!" if sender_address.nil?
+        raise "Shipment date must be set!" if shipment_date.blank?
+        raise "Sender address must be set!" if sender_address.blank?
+        raise "Receiver address must be set!" if receiver_address.blank?
 
-        # for using multiple parcels for product code EPN there is an extra
-        # service ServiceGroupDHLPaket.Multipack that needs to be set
-        if shipment_items.size > 1 and product_code == 'EPN'
-          add_service(GroupDHLPaketService.new)
-        end
+        add_and_validate_service_dependencies
 
         xml.Shipment do |xml|
           xml.ShipmentDetails do |xml|
@@ -69,7 +68,6 @@ module Dhl
             shipment_items.each do |shipment_item|
               shipment_item.append_to_xml(xml)
             end
-
             services.each do |service|
               service.append_to_xml(xml)
             end
@@ -83,6 +81,40 @@ module Dhl
             receiver_address.append_to_xml(xml)
           end
         end
+      end
+
+      private
+
+      def add_and_validate_service_dependencies
+        # for using multiple parcels for product code EPN or EXP there
+        # is an extra service ServiceGroupDHLPaket.Multipack that
+        # needs to be add
+        if add_dhl_paket_multipack_service?
+          add_service(DhlPaketMultipackService.new)
+        end
+
+        if dhl_domestic_express? and not has_service?(HigherInsuranceService)
+          # we also need a higher insurance service if not set already
+          add_service(HigherInsuranceService.new)
+        end
+
+        # check service constraints
+        if has_service?(DhlExpressService) and not dhl_domestic_express?
+          raise 'The DhlExpressService can only be add to DHL Domestic Express (EXP) shipments.'
+        end
+      end
+
+      def has_service?(service_class)
+        services.map(&:class).include?(service_class)
+      end
+
+      def dhl_domestic_express?
+        product_code == ProductCode::DHL_DOMESTIC_EXPRESS
+      end
+
+      def add_dhl_paket_multipack_service?
+        shipment_items.size > 1 and
+          ([ProductCode::DHL_DOMESTIC_EXPRESS, ProductCode::DHL_PACKAGE].include?(product_code))
       end
     end
   end

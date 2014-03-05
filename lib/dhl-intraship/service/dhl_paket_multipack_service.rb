@@ -1,6 +1,6 @@
 module Dhl
   module Intraship
-    class GroupDHLPaketService < Service
+    class DhlPaketMultipackService < Service
 
       def append_to_xml(xml)
         xml.Service do |xml|

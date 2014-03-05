@@ -68,7 +68,7 @@ EOS
       it "should raise an exception on a failed call" do
         savon.expects("de:DoManifestDDRequest").returns( code: 200, headers: {},body: ERROR_MANIFEST_RESPONSE )
 
-        expect { @api.doManifestDD("123") }.should raise_error
+        expect { @api.doManifestDD("123") }.to raise_error
       end
 
       it "should return true on successful call" do
