@@ -114,9 +114,9 @@ shipment.add_service(express_service)
 ```
 
 If the DHL Intraship Webservice returns: `1102 - Service 'SERVICE_ERT'
-is not allowed for productcode 'EXP'` your intraship account have not
-enough permissions to deliver express shipments (maybe also multi
-parcel shipment is not permitted).
+is not allowed for productcode 'EXP'`
+your intraship account have not enough permissions to deliver 
+express shipments (maybe also multi parcel shipment is not permitted).
 
 #### Add cash on delivery
 
