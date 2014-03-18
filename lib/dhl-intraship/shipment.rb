@@ -114,7 +114,7 @@ module Dhl
 
       def add_dhl_paket_multipack_service?
         shipment_items.size > 1 and
-          ([ProductCode::DHL_DOMESTIC_EXPRESS, ProductCode::DHL_PACKAGE].include?(product_code))
+          product_code == ProductCode::DHL_PACKAGE
       end
     end
   end
