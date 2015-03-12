@@ -40,7 +40,7 @@ EOS
       before(:each) do
         savon.expects("de:CreateShipmentDDRequest").returns(code: 200, headers: {}, body: CREATE_RESPONSE)
 
-        config  = { user: 'user', signature: 'signature', ekp: 'ekp12345' }
+        config  = { user: 'user', signature: 'signature', ekp: 'ekp12345', api_user: 'test', api_pwd: 'test' }
         options = { test: true }
         @api = API.new(config, options)
         @shipment = Shipment.new(shipment_date:    Date.today + 1,

@@ -10,15 +10,17 @@ module Dhl
           "xmlns:is" => "http://dhl.de/webservice/is_base_de",
           "xmlns:cis" => "http://dhl.de/webservice/cisbase"}
 
-      INTRASHIP_WSDL = "http://www.intraship.de/ws/1_0/ISService/DE.wsdl"
-      INTRASHIP_ENDPOINT = "http://www.intraship.de/ws/1_0/de/ISService"
-      INTRASHIP_TEST_WSDL = "http://test-intraship.dhl.com/ws/1_0/ISService/DE.wsdl"
-      INTRASHIP_TEST_ENDPOINT = "http://test-intraship.dhl.com/ws/1_0/de/ISService"
+      INTRASHIP_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
+      INTRASHIP_ENDPOINT = "https://cig.dhl.de/services/production/soap"
+      INTRASHIP_TEST_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
+      INTRASHIP_TEST_ENDPOINT = "https://cig.dhl.de/services/sandbox/soap"
 
       def initialize(config, options = {})
         raise "User must be specified" if config[:user].nil?
         raise "Signature (password) must be specified" if config[:signature].nil?
         raise "EKP (first part of the DHL account number) must be specified" if config[:ekp].nil?
+        raise "Api User must be specified" if config[:api_user].nil?
+        raise "Api Password must be specified" if config[:api_pwd].nil?
 
         if options[:test]
           wsdl_url = INTRASHIP_TEST_WSDL
@@ -39,6 +41,7 @@ module Dhl
           wsdl.document = wsdl_url
           wsdl.endpoint = endpoint
         end
+        @client.http.auth.basic(config[:api_user], config[:api_pwd])
       end
 
       def createShipmentDD(shipments)

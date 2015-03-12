@@ -29,6 +29,8 @@ Config is the following hash:
 
 ```ruby
 config = {
+  api_user: 'The user for API BasicAuth', #mandatory
+  api_pwd: 'The password for API BasicAuth', #mandatory
   user: 'your Intraship API user name', #mandatory
   signature: 'Your Intraship API user password', #mandatory
   ekp: 'Your DHL EKP (first part of your DHL Account number)', #mandatory
@@ -115,7 +117,7 @@ shipment.add_service(express_service)
 
 If the DHL Intraship Webservice returns: `1102 - Service 'SERVICE_ERT'
 is not allowed for productcode 'EXP'`
-your intraship account have not enough permissions to deliver 
+your intraship account have not enough permissions to deliver
 express shipments (maybe also multi parcel shipment is not permitted).
 
 #### Add cash on delivery
