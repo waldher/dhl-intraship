@@ -44,10 +44,8 @@ module Dhl
         @client.http.auth.basic(config[:api_user], config[:api_pwd])
       end
 
-      def createShipmentDD(shipments)
+      def createShipmentDD(shipment)
         begin
-          shipments = [shipments] unless shipments.respond_to?('each')
-
           # For some reason the class instance variables are not accessible inside of the request block
           ekp = @ekp
           partner_id = @partner_id
@@ -64,10 +62,8 @@ module Dhl
                     add_version_information(xml)
                     xml.ShipmentOrder do |xml|
                       xml.SequenceNumber('1')
-                      shipments.each do |shipment|
-                        shipment.append_to_xml(ekp, partner_id, xml)
-                        xml.LabelResponseType('XML') if returnXML
-                      end
+                      shipment.append_to_xml(ekp, partner_id, xml)
+                      xml.LabelResponseType('XML') if returnXML
                     end
                   end
                 end
