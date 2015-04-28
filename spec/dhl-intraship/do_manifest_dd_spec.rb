@@ -59,7 +59,7 @@ EOS
 
     describe API do
       before(:each) do
-        config = {user: 'user', signature: 'signature', ekp: 'ekp12345'}
+        config = {user: 'user', signature: 'signature', ekp: 'ekp12345', api_user: 'test', api_pwd: 'test'}
         options = {test: true}
         @api = API.new(config, options)
       end

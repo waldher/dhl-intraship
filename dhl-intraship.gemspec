@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "savon", "~> 1.1.0"
   gem.add_development_dependency "rspec", "~> 2.11.0"
   gem.add_development_dependency "savon_spec", "~> 1.3.0"
+  gem.add_development_dependency "webmock"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

@@ -18,3 +18,4 @@ tmp
 atlassian-ide-plugin.xml
 .idea
 test.rb
+vendor/bundle
