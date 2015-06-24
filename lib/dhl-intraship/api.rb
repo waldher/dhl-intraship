@@ -73,13 +73,14 @@ module Dhl
           r = result.to_hash[:create_shipment_response]
           if r[:status][:status_code] == '0'
             shipment_number = r[:creation_state][:shipment_number][:shipment_number]
-
+            status_message = r[:creation_state][:status_message]
+            
             if returnXML
               xml_label = r[:creation_state][:xmllabel]
-              {shipment_number: shipment_number, xml_label: xml_label}
+              {shipment_number: shipment_number, xml_label: xml_label, status_message: status_message}
             else
               label_url = r[:creation_state][:labelurl]
-              {shipment_number: shipment_number, label_url: label_url}
+              {shipment_number: shipment_number, label_url: label_url, status_message: status_message}
             end
 
           else
