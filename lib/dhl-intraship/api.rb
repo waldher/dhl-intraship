@@ -51,7 +51,7 @@ module Dhl
           partner_id = @partner_id
 
           returnXML = @config && @config[:label_response_type] && @config[:label_response_type] == :xml;
-          result = @client.request "de:CreateShipmentDDRequest" do
+          result = @client.request "urn:createShipmentDD" do
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
                 xml.soapenv(:Header) do |xml|
