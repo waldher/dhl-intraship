@@ -10,7 +10,7 @@ module Dhl
           "xmlns:is" => "http://dhl.de/webservice/is_base_de",
           "xmlns:cis" => "http://dhl.de/webservice/cisbase"}
 
-      INTRASHIP_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
+      INTRASHIP_WSDL = "https://api-eu.dhl.com/parcel/de/shipping/v0/1.0/geschaeftskundenversand-api-1.0.wsdl"
       INTRASHIP_ENDPOINT = "https://cig.dhl.de/services/production/soap"
       INTRASHIP_TEST_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
       INTRASHIP_TEST_ENDPOINT = "https://cig.dhl.de/services/sandbox/soap"
