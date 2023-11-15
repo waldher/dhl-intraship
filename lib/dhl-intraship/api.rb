@@ -10,7 +10,7 @@ module Dhl
           "xmlns:is" => "http://dhl.de/webservice/is_base_de",
           "xmlns:cis" => "http://dhl.de/webservice/cisbase"}
 
-      INTRASHIP_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
+      INTRASHIP_WSDL = "https://api-eu.dhl.com/parcel/de/shipping/v0/1.0/geschaeftskundenversand-api-1.0.wsdl"
       INTRASHIP_ENDPOINT = "https://cig.dhl.de/services/production/soap"
       INTRASHIP_TEST_WSDL = "https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/1.0/geschaeftskundenversand-api-1.0.wsdl"
       INTRASHIP_TEST_ENDPOINT = "https://cig.dhl.de/services/sandbox/soap"
@@ -51,7 +51,7 @@ module Dhl
           partner_id = @partner_id
 
           returnXML = @config && @config[:label_response_type] && @config[:label_response_type] == :xml;
-          result = @client.request "de:CreateShipmentDDRequest" do
+          result = @client.request "urn:createShipmentDD" do
             soap.xml do |xml|
               xml.soapenv(:Envelope, DEFAULT_NAMESPACES) do |xml|
                 xml.soapenv(:Header) do |xml|
